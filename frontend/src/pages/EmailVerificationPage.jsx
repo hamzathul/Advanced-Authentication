@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -12,24 +12,47 @@ const EmailVerificationPage = () => {
     const newCode = [...code]
 
     // Handle pasted content
-    if(value.length>1){
-        const pastedCode = value.slice(0,6).split("")
-        for(let i=0;i<6;i++){
-            newCode[i] = pastedCode[i] || ""
-        }
-        setCode(newCode)
+    if (value.length > 1) {
+      const pastedCode = value.slice(0, 6).split("");
+      for (let i = 0; i < 6; i++) {
+        newCode[i] = pastedCode[i] || "";
+      }
+      setCode(newCode);
 
-        // focus on the last non-empty input or the first empty one 
-        const lastFilledIndex = newCode.findLastIndex((digit)=>digit!=="")
-        const focusIndex = lastFilledIndex < 5 ? lastFilledIndex+1 : 5
+      // focus on the last non-empty input or the first empty one
+      const lastFilledIndex = newCode.findLastIndex((digit) => digit !== "");
+      const focusIndex = lastFilledIndex < 5 ? lastFilledIndex + 1 : 5;
+      inputRefs.current[focusIndex].focus();
+    } else {
+      newCode[index] = value;
+      setCode(newCode);
+
+      //move focus to the next input field if value is entered
+      if (value && index < 5) {
+        inputRefs.current[index + 1].focus();
+      }
     }
   };
 
   const handleKeyDown = (index, e) => {
     if(e.key==="Backspace" && !code[index] && index>0){
         inputRefs.current[index-1].focus()
-    }
+    } 
   };
+
+  const handleSubmit = (e)=>{
+    e.preventDefault
+    const verificationCode = code.join("")
+    alert(verificationCode)
+  }
+
+  // Auto submit when all fields are filled
+  useEffect(()=>{
+    if(code.every(digit=>digit!=='')){
+        handleSubmit(new Event('submit'))
+        
+    }
+  },[code])
   return (
     <div
       className="max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl
@@ -51,7 +74,7 @@ const EmailVerificationPage = () => {
         <p className="text-center text-gray-300 mb-6">
           Enter the 6-digit code sent to your email address
         </p>
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex justify-between">
             {code.map((digit, index) => (
               <input
