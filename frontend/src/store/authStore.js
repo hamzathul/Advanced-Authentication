@@ -3,19 +3,22 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/auth";
 
-export const useAuthStore = create((set) => ({
+axios.defaults.withCredentials = true
+
+export const useAuthStore = create((set) => ({ // initial values
   user: null,
   isAuthenticated: false,
   error: null,
   isLoading: false,
   isCheckingAuth: true,
 
-  signup: async (email, password, name) => {
+  signup: async (email, password, name) => { // signup function
     set({ isLoading: true, error: false });
     try {
       const response = await axios.post(`${API_URL}/signup`, {
         email,
         password,
+        name
       });
       set({
         user: response.data.user,
