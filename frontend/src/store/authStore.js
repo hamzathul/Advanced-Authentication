@@ -3,22 +3,24 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/auth";
 
-axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true;
 
-export const useAuthStore = create((set) => ({ // initial values
+export const useAuthStore = create((set) => ({
+  // initial values
   user: null,
   isAuthenticated: false,
   error: null,
   isLoading: false,
   isCheckingAuth: true,
 
-  signup: async (email, password, name) => { // signup function
+  signup: async (email, password, name) => {
+    // signup function
     set({ isLoading: true, error: false });
     try {
       const response = await axios.post(`${API_URL}/signup`, {
         email,
         password,
-        name
+        name,
       });
       set({
         user: response.data.user,
@@ -34,15 +36,22 @@ export const useAuthStore = create((set) => ({ // initial values
     }
   },
 
-  verifyEmail:async(code)=>{
-    set({isLoading:true, error:null})
+  verifyEmail: async (code) => {
+    set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/verify-email`,{code})
-      set({user:response.data.user, isAuthenticated:true, isLoading:false})
-      return response.data
+      const response = await axios.post(`${API_URL}/verify-email`, { code });
+      set({
+        user: response.data.user,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+      return response.data;
     } catch (error) {
-      set({error:error.response.data.message||"Error verifying email", isLoading:false})
-      throw error
+      set({
+        error: error.response.data.message || "Error verifying email",
+        isLoading: false,
+      });
+      throw error;
     }
-  }
+  },
 }));
