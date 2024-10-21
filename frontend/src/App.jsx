@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 import DashboardPage from "./pages/DashboardPage";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 //protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -38,8 +39,7 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
-  console.log("isAuthenticated", isAuthenticated);
-  console.log("User", user);
+  if(isCheckingAuth) return <LoadingSpinner/>
 
   return (
     <>
